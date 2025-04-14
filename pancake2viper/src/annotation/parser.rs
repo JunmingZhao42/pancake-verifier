@@ -296,16 +296,15 @@ fn parse_expr(pairs: Pairs<Rule>) -> Expr {
         })
         .map_infix(|lhs, op, rhs| {
             match op.as_rule() {
-                Rule::bin_op => { Expr::BinOp(BinOp {
-                    optype: BinOpType::from_pest(op),
-                    left: Box::new(lhs),
-                    right: Box::new(rhs),
-                })},
                 Rule::contains => { Expr::Contains( Contains {
                     left: Box::new(lhs),
                     right: Box::new(rhs),
                 })},
-                _ => unreachable!(),
+                _ => { Expr::BinOp(BinOp {
+                    optype: BinOpType::from_pest(op),
+                    left: Box::new(lhs),
+                    right: Box::new(rhs),
+                })}
             }
         })
         .map_postfix(|lhs, op| match op.as_rule() {
