@@ -34,6 +34,10 @@ impl ConstEvalExpr for Expr {
                 size: l.size,
             }),
             BinOp(b) => b.const_eval(options),
+            Contains(c) => Contains( ir::Contains {
+                left: Box::new(c.left.const_eval(options)),
+                right: Box::new(c.right.const_eval(options)),
+            }),
             UnOp(u) => u.const_eval(options),
             Shift(s) => s.const_eval(options),
             BaseAddr => Const(0),

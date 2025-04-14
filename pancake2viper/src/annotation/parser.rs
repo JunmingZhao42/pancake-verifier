@@ -29,6 +29,7 @@ lazy_static::lazy_static! {
             .op(Op::postfix(Rule::shift))
             .op(Op::infix(Rule::add, Left) | Op::infix(Rule::sub, Left))
             .op(Op::infix(Rule::mul, Left) | Op::infix(Rule::div, Left) | Op::infix(Rule::modulo, Left))
+            .op(Op::infix(Rule::contains, Left))
             .op(Op::prefix(Rule::neg) | Op::prefix(Rule::minus))
             .op(Op::postfix(Rule::field_acc))
             .op(Op::postfix(Rule::viper_field_acc))
@@ -294,11 +295,18 @@ fn parse_expr(pairs: Pairs<Rule>) -> Expr {
             })
         })
         .map_infix(|lhs, op, rhs| {
-            Expr::BinOp(BinOp {
-                optype: BinOpType::from_pest(op),
-                left: Box::new(lhs),
-                right: Box::new(rhs),
-            })
+            match op.as_rule() {
+                Rule::bin_op => { Expr::BinOp(BinOp {
+                    optype: BinOpType::from_pest(op),
+                    left: Box::new(lhs),
+                    right: Box::new(rhs),
+                })},
+                Rule::contains => { Expr::Contains( Contains {
+                    left: Box::new(lhs),
+                    right: Box::new(rhs),
+                })},
+                _ => unreachable!(),
+            }
         })
         .map_postfix(|lhs, op| match op.as_rule() {
             Rule::field_acc => Expr::Field(Field {

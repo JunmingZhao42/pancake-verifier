@@ -160,6 +160,16 @@ impl<'a> TryToViper<'a> for ir::BinOp {
     }
 }
 
+impl<'a> TryToViper<'a> for ir::Contains {
+    type Output = viper::Expr<'a>;
+    fn to_viper(self, ctx: &mut ViperEncodeCtx<'a>) -> Result<Self::Output, ToViperError> {
+        let ast = ctx.ast;
+        let elem = self.left.to_viper(ctx)?;
+        let seq = self.right.to_viper(ctx)?;
+        Ok(ast.seq_contains(elem, seq))
+    }
+}
+
 impl<'a> TryToViper<'a> for ir::Shift {
     type Output = viper::Expr<'a>;
     fn to_viper(self, ctx: &mut ViperEncodeCtx<'a>) -> Result<Self::Output, ToViperError> {
@@ -415,6 +425,7 @@ impl<'a> TryToViper<'a> for ir::Expr {
         match self {
             UnOp(op) => op.to_viper(ctx),
             BinOp(op) => op.to_viper(ctx),
+            Contains(c) => c.to_viper(ctx),
             FunctionCall(call) => call.to_viper(ctx),
             MethodCall(call) => call.to_viper(ctx),
             Shift(shift) => shift.to_viper(ctx),

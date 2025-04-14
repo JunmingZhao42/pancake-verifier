@@ -30,6 +30,7 @@ pub enum Expr {
     Old(Old),
     ViperFieldAccess(ViperFieldAccess),
     SeqLength(SeqLength),
+    Contains(Contains),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -113,6 +114,12 @@ pub enum BinOpType {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct BinOp {
     pub optype: BinOpType,
+    pub left: Box<Expr>,
+    pub right: Box<Expr>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct Contains {
     pub left: Box<Expr>,
     pub right: Box<Expr>,
 }

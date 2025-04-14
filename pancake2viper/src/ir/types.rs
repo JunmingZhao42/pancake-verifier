@@ -47,12 +47,13 @@ impl ExprTypeResolution for ir::Expr {
             UnfoldingIn(fold) => fold.expr.resolve_expr_type(is_annot, ctx),
             Ternary(tern) => tern.left.resolve_expr_type(is_annot, ctx),
             Quantified(quant) => {
-                quant.decls.resolve_type(is_annot, ctx)?;
-                Ok(Type::Bool)
-            }
+                        quant.decls.resolve_type(is_annot, ctx)?;
+                        Ok(Type::Bool)
+                    }
             Old(old) => old.expr.resolve_expr_type(is_annot, ctx),
             SeqLength(_) => Ok(Type::Int),
             ViperFieldAccess(acc) => ctx.get_field_type(&acc.field),
+            Contains(_) => Ok(Type::Bool),
         }
     }
 }

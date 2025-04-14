@@ -87,6 +87,7 @@ impl Display for Expr {
             Self::Ternary(t) => write!(f, "(({}) ? {} : {})", t.cond, t.left, t.right),
             Self::ViperFieldAccess(acc) => write!(f, "{}.{}", acc.obj, acc.field),
             Self::SeqLength(seq) => write!(f, "|{}|", seq.expr),
+            Self::Contains(c) => write!(f, "{} in {}", c.left, c.right),
         }
     }
 }
