@@ -188,6 +188,7 @@ impl<'a> ProgramToViper<'a> for Program {
         let method_ctx = Rc::new(MethodContext::new(&self.functions));
         let model = self.model.clone();
         let extern_methods = self.extern_methods.clone();
+        let extern_consts = self.extern_consts.clone();
 
         let mut predicate_names = self
             .predicates
@@ -208,6 +209,7 @@ impl<'a> ProgramToViper<'a> for Program {
                     method_ctx.clone(),
                     model.clone(),
                     extern_methods.clone(),
+                    extern_consts.clone(),
                 );
                 ctx.set_mode(TranslationMode::PrePost);
                 p.to_viper(&mut ctx)
@@ -237,6 +239,7 @@ impl<'a> ProgramToViper<'a> for Program {
                     method_ctx.clone(),
                     model.clone(),
                     extern_methods.clone(),
+                    extern_consts.clone(),
                 );
                 ctx.set_mode(TranslationMode::PrePost);
                 f.to_viper(&mut ctx)
@@ -256,6 +259,7 @@ impl<'a> ProgramToViper<'a> for Program {
                     method_ctx.clone(),
                     model.clone(),
                     extern_methods.clone(),
+                    extern_consts.clone(),
                 );
                 ctx.set_mode(TranslationMode::PrePost);
                 m.to_viper(&mut ctx)
@@ -275,6 +279,7 @@ impl<'a> ProgramToViper<'a> for Program {
                     method_ctx.clone(),
                     model.clone(),
                     extern_methods.clone(),
+                    extern_consts.clone(),
                 );
                 f.to_viper(&mut ctx)
             })

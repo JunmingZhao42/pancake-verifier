@@ -317,6 +317,7 @@ impl ConstEval for Program {
             model: self.model.const_eval(options),
             extern_predicates: self.extern_predicates,
             extern_fields: self.extern_fields,
+            extern_consts: self.extern_consts,
             extern_methods: self.extern_methods,
         }
     }

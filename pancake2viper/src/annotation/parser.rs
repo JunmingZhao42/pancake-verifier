@@ -152,6 +152,11 @@ pub fn parse_extern_field(s: &str) -> ParseResult<Decl> {
         .map(|mut pairs| Decl::from_pest(pairs.next().unwrap().into_inner().next().unwrap()))?)
 }
 
+pub fn parse_extern_const(s: &str) -> ParseResult<Decl> {
+    Ok(AnnotParser::parse(Rule::ext_const, s)
+        .map(|mut pairs| Decl::from_pest(pairs.next().unwrap().into_inner().next().unwrap()))?)
+}
+
 pub fn parse_extern_ffi(s: &str) -> ParseResult<String> {
     Ok(AnnotParser::parse(Rule::ffi_method, s).map(|mut pairs| {
         pairs

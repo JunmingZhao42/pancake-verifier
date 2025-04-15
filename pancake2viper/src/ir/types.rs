@@ -293,6 +293,9 @@ impl ir::Program {
         for pred in &self.extern_predicates {
             ctx.set_type(format!("f_{}", pred), Type::Bool);
         }
+        for (k, v) in &self.extern_consts {
+            ctx.set_type(k.clone(),v.clone());
+        }
         loop {
             ignore_unknown(self.viper_functions.resolve_type(true, &mut ctx))?;
             ignore_unknown(self.predicates.resolve_type(true, &mut ctx))?;

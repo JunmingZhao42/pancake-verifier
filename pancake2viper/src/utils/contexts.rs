@@ -148,6 +148,7 @@ pub struct ViperEncodeCtx<'a> {
     pub model: Model,
     pub extern_methods: HashSet<String>,
     pub shared_override: Option<String>,
+    pub extern_consts: HashMap<String, Type>,
 }
 
 #[derive(Clone, Copy)]
@@ -189,8 +190,12 @@ impl<'a> ViperEncodeCtx<'a> {
         annot: Rc<MethodContext>,
         model: Model,
         extern_methods: HashSet<String>,
+        extern_consts: HashMap<String, Type>,
     ) -> Self {
         let iarray = IArrayHelper::new(ast);
+        let fields_set: HashSet<String> = model.fields.clone().into_iter().collect();
+        let consts_set: HashSet<String> = extern_consts.keys().cloned().collect();
+        let mangler_set: HashSet<String> = fields_set.union(&consts_set).cloned().collect::<HashSet<String>>();
         Self {
             mode: TranslationMode::Normal,
             ast,
@@ -205,12 +210,13 @@ impl<'a> ViperEncodeCtx<'a> {
             consume_stack: true,
             invariants: vec![],
             predicates,
-            mangler: Mangler::new(model.fields.clone().into_iter().collect()),
+            mangler: Mangler::new(mangler_set),
             shared,
             method: annot,
             model,
             extern_methods,
             shared_override: None,
+            extern_consts,
         }
     }
 
@@ -235,6 +241,7 @@ impl<'a> ViperEncodeCtx<'a> {
             model: self.model.clone(),
             extern_methods: self.extern_methods.clone(),
             shared_override: self.shared_override.clone(),
+            extern_consts: self.extern_consts.clone(),
         }
     }
 
