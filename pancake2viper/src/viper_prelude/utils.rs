@@ -45,15 +45,13 @@ pub fn bound_function<'a>(
 #[derive(Clone)]
 pub struct Utils<'a> {
     ast: AstFactory<'a>,
-    iarray_typ: viper::Type<'a>,
     model: Model,
 }
 
 impl<'a> Utils<'a> {
-    pub fn new(ast: AstFactory<'a>, iarray_typ: viper::Type<'a>, model: Model) -> Self {
+    pub fn new(ast: AstFactory<'a>, model: Model) -> Self {
         Self {
             ast,
-            iarray_typ,
             model,
         }
     }
@@ -68,7 +66,7 @@ impl<'a> Utils<'a> {
     }
 
     pub fn heap(&self) -> (LocalVarDecl<'a>, Expr<'a>) {
-        self.ast.new_var("heap", self.iarray_typ)
+        self.ast.new_var("heap", self.ast.seq_type(self.ast.ref_type()))
     }
 
     pub fn get_model(&self) -> &Model {

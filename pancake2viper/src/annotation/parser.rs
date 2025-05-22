@@ -464,7 +464,6 @@ impl FromPestPair for Type {
         match pair.as_rule() {
             Rule::bool_t => Self::Bool,
             Rule::int_t => Self::Int,
-            Rule::iarray_t => Self::Array,
             Rule::ref_t => Self::Ref,
             Rule::map_t => {
                 let mut inner = pair.into_inner();

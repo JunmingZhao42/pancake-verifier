@@ -260,10 +260,6 @@ impl<'a> TryToViper<'a> for ir::FunctionCall {
         let args = self.args.to_viper(ctx)?;
         let mut base_args = ctx.get_default_args().1;
         Ok(match self.fname.as_str() {
-            "f_alen" => {
-                let arr = args[0];
-                ctx.iarray.len_f(arr)
-            }
             "f_old" => ast.old(args[0]),
             pred if ctx.is_predicate(pred) => {
                 base_args.extend(args);
@@ -332,7 +328,7 @@ impl<'a> TryToViper<'a> for ir::ArrayAccess {
         let obj = self.obj.to_viper(ctx)?;
         Ok(match typ {
             Type::Seq(_) => ctx.ast.seq_index(obj, idx),
-            _ => ctx.iarray.access(obj, idx),
+            _ => todo!(),
         })
     }
 }
@@ -387,7 +383,9 @@ impl<'a> TryToViper<'a> for ir::Ternary {
 impl<'a> TryToViper<'a> for ir::AccessSlice {
     type Output = viper::Expr<'a>;
 
-    fn to_viper(self, ctx: &mut ViperEncodeCtx<'a>) -> Result<Self::Output, ToViperError> {
+    fn to_viper(self, _ctx: &mut ViperEncodeCtx<'a>) -> Result<Self::Output, ToViperError> {
+        todo!()
+        /*
         let ast = ctx.ast;
         let field = self.field.to_viper(ctx)?;
         let lower = self.lower.to_viper(ctx)?;
@@ -401,6 +399,7 @@ impl<'a> TryToViper<'a> for ir::AccessSlice {
         );
         let perm = self.perm.to_viper(ctx);
         Ok(ctx.iarray.array_acc_expr(field, lower, length, perm))
+        */
     }
 }
 
@@ -454,7 +453,10 @@ impl<'a> TryToViper<'a> for ir::Expr {
                 BytesInWord => ast.int_lit(ctx.options.word_size as i64 / 8),
                 Old(old) => ast.old(old.expr.to_viper(ctx)?),
                 SeqLength(s) => ast.seq_length(s.expr.to_viper(ctx)?),
-                _ => unreachable!(),
+                _ => {
+                    println!("{:?}", x); 
+                    unreachable!()
+                },
             }),
         }
     }

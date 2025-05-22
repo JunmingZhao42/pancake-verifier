@@ -14,7 +14,6 @@ pub enum Type {
     Int,
     Bool,
     Struct(Vec<Shape>),
-    Array,
     Wildcard,
     Ref,
     Set(Box<Self>),
@@ -77,7 +76,6 @@ impl ExprTypeResolution for ir::ArrayAccess {
                     inner[0].to_type(is_annot)
                 }
             }),
-            Type::Array => Ok(Type::Int),
             Type::Seq(i) => Ok(*i),
             _ => Err(TranslationError::ShapeError(IRSimpleShapeFieldAccess(
                 *self.obj.clone(),

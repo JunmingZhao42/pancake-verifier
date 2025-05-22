@@ -6,7 +6,7 @@ use viper::AstFactory;
 
 use crate::utils::{
     EncodeOptions, ForceToBool, MethodContext, ProgramToViper, ToViper, ToViperError, ToViperType,
-    TranslationMode, TryToViper, TypeContext, ViperEncodeCtx,
+    TranslationMode, TryToViper, TypeContext, ViperEncodeCtx, ViperUtils,
 };
 use crate::viper_prelude::create_viper_prelude;
 
@@ -59,14 +59,32 @@ impl<'a> TryToViper<'a> for FnDec {
         ctx.set_mode(TranslationMode::PrePost);
         pres.extend(self.pres.force_to_bool(ctx)?);
 
+        let heap_var = ctx.heap_var().1;
         // add precondition about heap size: `requires alen(heap) == HEAP_SIZE`
         pres.insert(
             0,
             ast.eq_cmp(
-                ctx.iarray.len_f(ctx.heap_var().1),
-                ast.int_lit(ctx.options.heap_size as i64),
+                ast.seq_length(heap_var),
+                ast.int_lit(ctx.options.heap_top as i64),
             ),
         );
+        let (i_decl, i) = ast.new_var("i", ast.int_type());
+        let (j_decl, j) = ast.new_var("j", ast.int_type());
+        pres.insert(
+            1,
+            ast.forall(
+                &[i_decl, j_decl],
+                &[],
+                ast.implies(
+                    ast.and(ast.and(
+                        ast.and(ast.le_cmp(ast.zero(), i), ast.lt_cmp(i, ast.seq_length(heap_var))),
+                        ast.and(ast.le_cmp(ast.zero(), j), ast.lt_cmp(j, ast.seq_length(heap_var)))
+                    ), ast.ne_cmp(i, j)),
+                    ast.ne_cmp(ast.seq_index(heap_var, i), ast.seq_index(heap_var, j))
+                )
+            ),
+        );
+
         posts.extend(self.posts.force_to_bool(ctx)?);
         ctx.set_mode(TranslationMode::Normal);
 

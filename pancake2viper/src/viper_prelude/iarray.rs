@@ -93,7 +93,7 @@ impl<'a> IArrayHelper<'a> {
 
     /// The type of an IArray
     pub fn get_type(&self) -> Type<'a> {
-        self.ast.domain_type("IArray", &[], &[])
+        self.ast.seq_type(self.ast.ref_type())
     }
 
     /// The field of an IArray
